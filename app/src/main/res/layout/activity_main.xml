@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.main.MainActivity">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="11dp" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/default_horizontal_guide" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal_fifty_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent=".5" />
+
+        <TextView
+            android:id="@+id/wifi_direct_mac_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+            android:text="@string/wifi_direct_mac_id"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/empty_layout"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/wifi_direct_mac_id"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="@string/recycler_view_empty_no_items"/>
+
+        <com.w3engineers.ext.strom.application.ui.widget.BaseRecyclerView
+            android:id="@+id/node_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:paddingTop="@dimen/node_list_top"
+            android:paddingEnd="@dimen/node_list_end"
+            app:brv_emptyLayoutId="@id/empty_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_fifty_percent"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+            app:layout_constraintTop_toBottomOf="@id/wifi_direct_mac_id"
+            tools:ignore="RtlSymmetry" />
+
+        <!--<android.support.v7.widget.RecyclerView
+            android:id="@+id/node_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:paddingTop="20dp"
+            app:brv_emptyLayoutId="@id/empty_layout"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+            app:layout_constraintTop_toBottomOf="@id/wifi_direct_mac_id"
+            tools:listitem="@layout/item_mesh_node"
+            tools:itemcount="5"/>-->
+
+        <TextView
+            android:id="@+id/log_text_view_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:text="@string/log"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+            app:layout_constraintTop_toBottomOf="@id/guideline_horizontal_fifty_percent" />
+
+
+        <ScrollView
+            android:id="@+id/log_text_view_scoller"
+            app:layout_constraintStart_toEndOf="@id/guideline_vertical"
+            app:layout_constraintTop_toBottomOf="@id/log_text_view_title"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:fillViewport="true"
+            android:paddingTop="@dimen/log_title_text_size">
+
+            <TextView
+                android:id="@+id/log_text_view"
+                android:textIsSelectable="true"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0"
+                android:hint="@string/log_hint"/>
+
+        </ScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.settings.SettingsActivity">
+    <data>
+
+        <variable
+            name="settingsViewModel"
+            type="com.w3engineers.core.meshx.ui.settings.SettingsViewModel" />
+
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/default_vertical_guide" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/default_horizontal_guide" />
+
+        <Switch
+            android:id="@+id/switch_wifi_direct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{settingsViewModel.wiFiDirect}"
+            android:onCheckedChanged="@{(switch, checked) -> settingsViewModel.onWiFiDirectCheckedChanged(checked)}"
+            android:text="@string/wifi_direct_settings"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal" />
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

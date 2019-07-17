@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MeshX</string>
+    <string name="hello_mesh">Hello Mesh!</string>
+    <string name="settings">settings</string>
+    <string name="wifi_direct_settings">WiFi Direct</string>
+    <string name="send_hello_button_text">Send Hello</string>
+    <string name="recycler_view_empty_no_items">No Items</string>
+    <string name="wifi_direct_mac_id">Mac ID:</string>
+    <string name="log">Log:</string>
+    <string name="log_hint">No Log</string>
+</resources>

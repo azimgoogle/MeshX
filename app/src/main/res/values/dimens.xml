@@ -1,0 +1,10 @@
+<resources>
+
+    <!--Common dimensions-->
+    <dimen name="default_horizontal_guide">16dp</dimen>
+    <dimen name="default_vertical_guide">16dp</dimen>
+    <dimen name="node_list_top">20dp</dimen>
+    <dimen name="node_list_end">5dp</dimen>
+    <dimen name="log_title_text_size">20sp</dimen>
+
+</resources>
