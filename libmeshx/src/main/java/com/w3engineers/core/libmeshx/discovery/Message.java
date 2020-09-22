@@ -22,6 +22,20 @@ package com.w3engineers.core.libmeshx.discovery;
  **/
 public class Message {
 
-    public byte[] mBytes;
 
+    public String mData;
+    public String mFrom;
+
+    public Message(String from, String data) {
+        this.mFrom = from;
+        this.mData = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "From='" + mFrom + '\'' +
+                ", Data='" + mData + '\'' +
+                '}';
+    }
 }

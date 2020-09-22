@@ -71,7 +71,10 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
 
                     mNetworkName = group.getNetworkName();
                     mPassphrase = group.getPassphrase();
-                    startLocalService(group.getNetworkName().replace("DIRECT-", "") + ":" + group.getPassphrase());
+                    startLocalService(group.getNetworkName().replace("DIRECT-",
+                            "") + ":" + group.getPassphrase() /*+
+                            ":1-loremepsumlorempsumloremepsum" + ":2-loremepsumlorempsumloremepsum"+
+                            ":3-loremepsumlorempsumloremepsum" + ":4-loremepsumlorempsumloremepsum"*/);
                 }
             } catch(Exception e) {
                 e.printStackTrace();
@@ -125,7 +128,8 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
     private void startLocalService(String instance) {
 
         Map<String, String> record = new HashMap<>();
-        record.put("available", "visible");
+        record.put("okay", "available");
+//        record.put("available", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
 
         WifiP2pDnsSdServiceInfo service = WifiP2pDnsSdServiceInfo.newInstance( instance,
                 Constants.Service.TYPE, record);

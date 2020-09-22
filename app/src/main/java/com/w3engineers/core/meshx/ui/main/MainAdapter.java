@@ -1,11 +1,13 @@
 package com.w3engineers.core.meshx.ui.main;
 
 import android.databinding.ViewDataBinding;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.w3engineers.core.meshx.R;
 import com.w3engineers.core.meshx.databinding.ItemMeshNodeBinding;
 import com.w3engineers.ext.strom.application.ui.base.BaseAdapter;
+import com.w3engineers.ext.strom.application.ui.base.ItemClickListener;
 
 
 /**
@@ -32,6 +34,10 @@ public class MainAdapter extends BaseAdapter<String> {
 
     private final int NODE_ITEM_TYPE = 1;
     private final int DEFAULT_ITEM_TYPE = 2;
+
+    public MainAdapter(ItemClickListener<String> itemClickListener) {
+        mItemClickListener = itemClickListener;
+    }
 
     @Override
     public boolean isEqual(String left, String right) {
@@ -68,6 +74,11 @@ public class MainAdapter extends BaseAdapter<String> {
         @Override
         public void bind(String item) {
             mItemMeshNodeBinding.nodeId.setText(item);
+        }
+
+        @Override
+        public void onClick(View view) {
+            super.onClick(view);
         }
     }
 }

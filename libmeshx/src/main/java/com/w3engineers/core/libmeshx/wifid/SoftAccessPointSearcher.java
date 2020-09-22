@@ -25,7 +25,7 @@ import android.content.Context;
 public class SoftAccessPointSearcher extends P2PServiceSearcher {
 
     public interface ServiceFound {
-        void onServiceFoundSuccess(String ssid, String passPhrase);
+        void onServiceFoundSuccess(String ssid, String passPhrase, String mac);
     }
 
     private ServiceFound mServiceFound;
@@ -40,9 +40,9 @@ public class SoftAccessPointSearcher extends P2PServiceSearcher {
     }
 
     @Override
-    protected void onDesiredServiceFound(String ssid, String passPhrase) {
+    protected void onDesiredServiceFound(String ssid, String passPhrase, String mac) {
         if(mServiceFound != null) {
-            mServiceFound.onServiceFoundSuccess(ssid, passPhrase);
+            mServiceFound.onServiceFoundSuccess(ssid, passPhrase, mac);
         }
     }
 }

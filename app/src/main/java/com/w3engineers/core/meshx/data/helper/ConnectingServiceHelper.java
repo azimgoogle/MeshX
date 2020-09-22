@@ -30,7 +30,7 @@ import com.w3engineers.ext.strom.util.helper.data.local.SharedPref;
  **/
 public class ConnectingServiceHelper {
 
-    public static void init(Context applicationContext, MeshXListener meshXListenerm,
+    public static void init(Context applicationContext, MeshXListener meshXListener,
                             MeshXLogListener meshXLogListener) {
         if (applicationContext == null)
             throw new NullPointerException(Constants.Messages.NULL_CONTEXT_MESSAGE);
@@ -44,6 +44,7 @@ public class ConnectingServiceHelper {
                     WiFiDirectManagerLegacy.getInstance(applicationContext);
             wiFiDirectManagerLegacy.start();
             wiFiDirectManagerLegacy.setMeshXLogListener(meshXLogListener);
+            wiFiDirectManagerLegacy.setMeshXListener(meshXListener);
         }
 
     }

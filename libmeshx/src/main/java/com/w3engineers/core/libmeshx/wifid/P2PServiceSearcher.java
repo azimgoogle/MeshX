@@ -8,7 +8,6 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
 
-import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
@@ -40,7 +39,7 @@ import static android.net.wifi.p2p.WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION;
  **/
 
 /**
- * Discovers peers and provided service type. If found then call {@link #onDesiredServiceFound(String, String)}
+ * Discovers peers and provided service type. If found then call {@link #onDesiredServiceFound(String, String, String)}
  */
 public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListener {
 
@@ -62,7 +61,7 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
         mContext = context;
     }
 
-    protected abstract void onDesiredServiceFound(String ssid, String passPhrase);
+    protected abstract void onDesiredServiceFound(String ssid, String passPhrase, String mac);
 
     public boolean start() {
 
@@ -114,7 +113,8 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
                         final String networkSSID = separated[0];
                         final String networkPass = separated[1];
 
-                        onDesiredServiceFound("DIRECT-"+networkSSID, networkPass);
+                        onDesiredServiceFound("DIRECT-"+networkSSID, networkPass,
+                                device.deviceAddress);
                     }
 
                 } else {
@@ -145,7 +145,8 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
 
     private void startServiceDiscovery() {
 
-        WifiP2pDnsSdServiceRequest request = WifiP2pDnsSdServiceRequest.newInstance();
+//        WifiP2pDnsSdServiceRequest request = WifiP2pDnsSdServiceRequest.newInstance();
+        WifiP2pDnsSdServiceRequest request = WifiP2pDnsSdServiceRequest.newInstance(Constants.Service.TYPE);
         final Handler handler = new Handler();
         mWifiP2pManager.addServiceRequest(mChannel, request, new WifiP2pManager.ActionListener() {
 

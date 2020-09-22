@@ -2,7 +2,10 @@ package com.w3engineers.core.libmeshx.wifi;
 
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+
+import com.w3engineers.core.libmeshx.discovery.MeshXListener;
 
 import timber.log.Timber;
 
@@ -33,6 +36,7 @@ public class WiFiClient implements WiFiClientState {
     private WifiManager mWifiManager;
     private int mNetworkId;
     private WiFiClientStateReceiver mWiFiClientStateReceiver;
+    public MeshXListener mMeshXListener;
 
     public WiFiClient(Context context, String ssid, String passPhrase) {
         this.mContext = context;
@@ -69,10 +73,20 @@ public class WiFiClient implements WiFiClientState {
     @Override
     public void onConnected() {
         Timber.d("Connected to WiFi");
+        if(mWifiManager != null) {
+            WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+            String connectedSSID = wifiInfo.getSSID();
+            if(mMeshXListener != null) {
+                mMeshXListener.onConnectedWith(connectedSSID);
+            }
+        }
     }
 
     @Override
     public void onDisconnected() {
         Timber.d("Disonnected from WiFi");
+        if(mMeshXListener != null) {
+            mMeshXListener.onDisConnected();
+        }
     }
 }

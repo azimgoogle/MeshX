@@ -23,6 +23,7 @@ package com.w3engineers.core.libmeshx.wifid;
 
 import android.content.Context;
 
+import com.w3engineers.core.libmeshx.discovery.MeshXListener;
 import com.w3engineers.core.libmeshx.discovery.MeshXLogListener;
 import com.w3engineers.core.libmeshx.wifi.WiFiClient;
 
@@ -37,9 +38,10 @@ public class WiFiDirectManagerLegacy {
     private SoftAccessPointSearcher mSoftAccessPointSearcher;
     private WiFiClient mWiFiClient;
     private MeshXLogListener mMeshXLogListener;
+    private MeshXListener mMeshXListener;
     private SoftAccessPointSearcher.ServiceFound mServiceFound = new SoftAccessPointSearcher.ServiceFound() {
         @Override
-        public void onServiceFoundSuccess(String ssid, String passPhrase) {
+        public void onServiceFoundSuccess(String ssid, String passPhrase, String mac) {
             if(mMeshXLogListener != null) {
                 mMeshXLogListener.onLog("SSID - " + ssid + "::Passphrase - "+passPhrase);
             }
@@ -52,6 +54,10 @@ public class WiFiDirectManagerLegacy {
             mSoftAccessPointSearcher.Stop();
 
             mWiFiClient.connect();
+
+            if(mMeshXListener != null) {
+                mMeshXListener.onMac(mac, ssid);
+            }
         }
     };
 
@@ -98,5 +104,9 @@ public class WiFiDirectManagerLegacy {
 
     public void setMeshXLogListener(MeshXLogListener meshXLogListener) {
         mMeshXLogListener = meshXLogListener;
+    }
+
+    public void setMeshXListener(MeshXListener meshXListener) {
+        mMeshXListener = meshXListener;
     }
 }

@@ -43,4 +43,10 @@ public interface MeshXListener {
      * @param message
      */
     void onMessage(Message message);
+
+    void onMac(String mac, String ssid);
+
+    void onConnectedWith(String ssid);
+
+    void onDisConnected();
 }
