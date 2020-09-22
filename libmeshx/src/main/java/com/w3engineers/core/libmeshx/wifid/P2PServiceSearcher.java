@@ -8,6 +8,9 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
 
+import java.util.List;
+import java.util.Map;
+
 import timber.log.Timber;
 
 import static android.net.wifi.p2p.WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION;
@@ -102,16 +105,16 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
 
             public void onDnsSdServiceAvailable(String instanceName, String serviceType, WifiP2pDevice device) {
 
+                Timber.d("[Lazy-Network]instance:%s-service:%s", instanceName, serviceType);
                 if (serviceType.startsWith(mServiceType)) {
 
 
                     String[] separated = instanceName.split(":");
-                    if(separated.length > 2) {
-                        final String networkSSID = separated[1];
-                        final String networkPass = separated[2];
-                        final String ipAddress = separated[3];
+                    if(separated.length > 1) {
+                        final String networkSSID = separated[0];
+                        final String networkPass = separated[1];
 
-                        onDesiredServiceFound(networkSSID, networkPass);
+                        onDesiredServiceFound("DIRECT-"+networkSSID, networkPass);
                     }
 
                 } else {
@@ -122,7 +125,19 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
             }
         };
 
-        mWifiP2pManager.setDnsSdResponseListeners(mChannel, mDnsSdServiceResponseListener, null);
+        mWifiP2pManager.setDnsSdResponseListeners(mChannel, mDnsSdServiceResponseListener, new WifiP2pManager.DnsSdTxtRecordListener() {
+            @Override
+            public void onDnsSdTxtRecordAvailable(String fullDomainName, Map<String, String> txtRecordMap, WifiP2pDevice srcDevice) {
+                Timber.d("[Lazy-Network]DomainName:%s-Map:%s", fullDomainName, txtRecordMap);
+            }
+        });
+
+        /*mWifiP2pManager.setUpnpServiceResponseListener(mChannel, new WifiP2pManager.UpnpServiceResponseListener() {
+            @Override
+            public void onUpnpServiceAvailable(List<String> uniqueServiceNames, WifiP2pDevice srcDevice) {
+
+            }
+        });*/
         startPeerDiscovery();
 
         return true;
@@ -130,7 +145,7 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
 
     private void startServiceDiscovery() {
 
-        WifiP2pDnsSdServiceRequest request = WifiP2pDnsSdServiceRequest.newInstance(Constants.Service.TYPE);
+        WifiP2pDnsSdServiceRequest request = WifiP2pDnsSdServiceRequest.newInstance();
         final Handler handler = new Handler();
         mWifiP2pManager.addServiceRequest(mChannel, request, new WifiP2pManager.ActionListener() {
 

@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MeshX.iml" filepath="$PROJECT_DIR$/MeshX.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MeshX-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MeshX-app.iml" group="MeshX/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libmeshx/MeshX-libmeshx.iml" filepath="$PROJECT_DIR$/.idea/modules/libmeshx/MeshX-libmeshx.iml" group="MeshX/libmeshx" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/libmeshx/libmeshx.iml" filepath="$PROJECT_DIR$/libmeshx/libmeshx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/play-MeshX.iml" filepath="$PROJECT_DIR$/.idea/modules/play-MeshX.iml" group="MeshX" />
     </modules>
   </component>
 </project>

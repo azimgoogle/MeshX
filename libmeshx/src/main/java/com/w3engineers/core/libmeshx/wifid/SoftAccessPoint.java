@@ -71,7 +71,7 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
 
                     mNetworkName = group.getNetworkName();
                     mPassphrase = group.getPassphrase();
-                    startLocalService("NI:" + group.getNetworkName() + ":" + group.getPassphrase() + ":" + mInetAddress);
+                    startLocalService(group.getNetworkName().replace("DIRECT-", "") + ":" + group.getPassphrase());
                 }
             } catch(Exception e) {
                 e.printStackTrace();

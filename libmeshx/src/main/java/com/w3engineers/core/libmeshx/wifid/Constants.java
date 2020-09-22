@@ -23,7 +23,7 @@ package com.w3engineers.core.libmeshx.wifid;
 public class Constants {
 
     public interface Service {
-        String TYPE = "meshh.x";
+        String TYPE = "_meshx._tcp";
         long DISCOVERY_DELAY = 1000;//In ms
     }
 
