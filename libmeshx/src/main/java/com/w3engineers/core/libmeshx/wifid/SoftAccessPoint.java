@@ -9,6 +9,8 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.text.TextUtils;
 
+import com.w3engineers.core.libmeshx.http.nanohttpd.util.AndroidUtil;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +42,18 @@ import static android.net.wifi.p2p.WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION;
  **/
 public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, WifiP2pManager.ChannelListener {
 
+    private final int DELAY = 60 * 1000;
     private WifiP2pManager mWifiP2pManager;
     private WifiP2pManager.Channel mChannel;
     private Context mContext;
     private PeerReceiver mPeerReceiver;
     private String mNetworkName, mPassphrase, mInetAddress;
+    private String mInstanceName;
+    private Runnable mBroadcastScheduler = () -> {
+        stopLocalServices();
+        AndroidUtil.sleep(5 * 1000);
+        startLocalService(mInstanceName);
+    };
 
     public SoftAccessPoint(Context context) {
         mContext = context;
@@ -71,10 +80,11 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
 
                     mNetworkName = group.getNetworkName();
                     mPassphrase = group.getPassphrase();
-                    startLocalService(group.getNetworkName().replace("DIRECT-",
+                    mInstanceName = group.getNetworkName().replace("DIRECT-",
                             "") + ":" + group.getPassphrase() /*+
                             ":1-loremepsumlorempsumloremepsum" + ":2-loremepsumlorempsumloremepsum"+
-                            ":3-loremepsumlorempsumloremepsum" + ":4-loremepsumlorempsumloremepsum"*/);
+                            ":3-loremepsumlorempsumloremepsum" + ":4-loremepsumlorempsumloremepsum"*/;
+                    startLocalService(mInstanceName);
                 }
             } catch(Exception e) {
                 e.printStackTrace();
@@ -127,6 +137,8 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
 
     private void startLocalService(String instance) {
 
+        AndroidUtil.post(mBroadcastScheduler, DELAY);
+
         Map<String, String> record = new HashMap<>();
         record.put("okay", "available");
 //        record.put("available", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
@@ -146,8 +158,7 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
         });
     }
 
-    private void stopLocalServices() {
-        mNetworkName = mPassphrase = null;
+    public void stopLocalServices() {
 
         mWifiP2pManager.clearLocalServices(mChannel, new WifiP2pManager.ActionListener() {
             public void onSuccess() {
@@ -161,11 +172,13 @@ public class SoftAccessPoint implements WifiP2pManager.ConnectionInfoListener, W
     }
 
     public void Stop() {
+        mNetworkName = mPassphrase = null;
         try {
             mContext.unregisterReceiver(mPeerReceiver);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+        AndroidUtil.remove(mBroadcastScheduler);
         stopLocalServices();
         removeGroup();
     }

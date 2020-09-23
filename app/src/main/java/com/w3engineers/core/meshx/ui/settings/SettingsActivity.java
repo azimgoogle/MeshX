@@ -56,7 +56,7 @@ public class SettingsActivity extends BaseActivity {
             @Override
             public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
 
-                SharedPref sharedPref = SharedPref.getSharedPref(SettingsActivity.this);
+                SharedPref sharedPref = SharedPref.getSharedPref(getApplicationContext());
                 return (T) new SettingsViewModel(sharedPref);
             }
         }).get(SettingsViewModel.class);

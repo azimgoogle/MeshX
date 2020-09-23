@@ -43,4 +43,20 @@ public class SettingsViewModel extends ViewModel {
         mSharedPref.write(Constants.NetworkInterface.WiFiDirect, checked);
     }
 
+    public boolean getWiFiDirectGO() {
+        return mSharedPref.readBooleanDefaultTrue(Constants.NetworkInterface.WiFiDirectGO);
+    }
+
+    public void onWiFiDirectGOCheckedChanged(boolean checked) {
+        mSharedPref.write(Constants.NetworkInterface.WiFiDirectGO, checked);
+    }
+
+    public boolean getWiFiDirectLC() {
+        return mSharedPref.readBooleanDefaultTrue(Constants.NetworkInterface.WiFiDirectLC);
+    }
+
+    public void onWiFiDirectLCCheckedChanged(boolean checked) {
+        mSharedPref.write(Constants.NetworkInterface.WiFiDirectLC, checked);
+    }
+
 }

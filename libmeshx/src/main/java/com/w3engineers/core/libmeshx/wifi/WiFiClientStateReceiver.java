@@ -3,6 +3,7 @@ package com.w3engineers.core.libmeshx.wifi;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
 
 /**
@@ -45,6 +46,7 @@ public class WiFiClientStateReceiver {
         mConnectivityManager = (ConnectivityManager)
                 context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkRequest.Builder builder = new NetworkRequest.Builder();
+        builder.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
 
         mNetworkCallback = new ConnectivityManager.NetworkCallback() {
             /**

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.text.TextUtils;
 
 import com.w3engineers.core.libmeshx.discovery.MeshXListener;
+
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -52,16 +55,62 @@ public class WiFiClient implements WiFiClientState {
      */
     public boolean connect() {
 
+        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+        String ssid = wifiInfo.getSSID().replace("\"", "");
+        if(mTargetSSID.equals(ssid)) {
+            return true;
+        }
+
+        mWifiManager.disconnect();
+
+        Timber.d("Connection_log Initial-%s", mTargetSSID);
 
         WifiConfiguration wifiConfig = new WifiConfiguration();
         wifiConfig.SSID = String.format("\"%s\"", mTargetSSID);
         wifiConfig.preSharedKey = String.format("\"%s\"", mPassPhrase);
 
-        this.mNetworkId = this.mWifiManager.addNetwork(wifiConfig);
-        mWifiManager.enableNetwork(mNetworkId, false);
-        mWifiManager.reconnect();
+        //// TODO: 7/17/2019
+        //It automates SSID connection whenever available so it gives us huge performance benefit.
+        //To leverage the benefit we need to have according support. Would add later
+//        wifiConfig.hiddenSSID = true;
 
-        return true;
+        int networkId = getConfiguredWiFiNetworkId(mTargetSSID);
+        if (networkId != -1) {
+            wifiConfig.networkId = networkId;
+            Timber.d("Connection_log %s-%s", networkId, mTargetSSID);
+            networkId = mWifiManager.updateNetwork(wifiConfig);
+            Timber.d("Connection_log %s", networkId);
+            if (networkId == -1) {
+                networkId = this.mWifiManager.addNetwork(wifiConfig);
+                Timber.d("Connection_log %s", networkId);
+            }
+        } else {
+            networkId = this.mWifiManager.addNetwork(wifiConfig);
+            Timber.d("Connection_log %s-%s", networkId, mTargetSSID);
+        }
+        mWifiManager.enableNetwork(networkId, true);
+        return mWifiManager.reconnect();
+    }
+
+
+    public int getConfiguredWiFiNetworkId(String SSID) {
+        if (TextUtils.isEmpty(SSID)) {
+            return -1;
+        }
+        List<WifiConfiguration> configuredNetworks = mWifiManager.getConfiguredNetworks();
+
+        if (configuredNetworks != null) {
+
+            for (WifiConfiguration wifiConfiguration : configuredNetworks) {
+                if (wifiConfiguration != null && wifiConfiguration.networkId != -1) {
+                    if (SSID.equals(wifiConfiguration.SSID)) {
+                        return wifiConfiguration.networkId;
+                    }
+                }
+            }
+        }
+
+        return -1;
     }
 
     public void destroy() {
@@ -77,7 +126,7 @@ public class WiFiClient implements WiFiClientState {
             WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
             String connectedSSID = wifiInfo.getSSID();
             if(mMeshXListener != null) {
-                mMeshXListener.onConnectedWith(connectedSSID);
+                mMeshXListener.onConnectedWith(connectedSSID.replaceAll("\"",""));
             }
         }
     }

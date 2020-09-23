@@ -24,6 +24,8 @@ public class Constants {
 
     public interface NetworkInterface {
         String WiFiDirect = "WiFiDirect";
+        String WiFiDirectGO = "WiFiDirectGO";
+        String WiFiDirectLC = "WiFiDirectLC";
     }
 
     /**

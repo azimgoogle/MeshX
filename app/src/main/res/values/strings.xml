@@ -3,6 +3,8 @@
     <string name="hello_mesh">Hello Mesh!</string>
     <string name="settings">settings</string>
     <string name="wifi_direct_settings">WiFi Direct</string>
+    <string name="wifi_direct_settings_go">WiFi GO</string>
+    <string name="wifi_direct_settings_lc">WiFi LC</string>
     <string name="send_hello_button_text">Send Hello</string>
     <string name="recycler_view_empty_no_items">No Items</string>
     <string name="wifi_direct_mac_id">Mac ID:</string>

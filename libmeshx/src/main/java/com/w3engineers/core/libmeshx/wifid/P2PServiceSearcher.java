@@ -7,6 +7,9 @@ import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Handler;
+import android.text.TextUtils;
+
+import com.w3engineers.core.libmeshx.http.nanohttpd.util.AndroidUtil;
 
 import java.util.Map;
 
@@ -56,6 +59,12 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
     private WifiP2pManager.DnsSdServiceResponseListener mDnsSdServiceResponseListener;
     private ServiceState mServiceState = ServiceState.NONE;
     String mServiceType = Constants.Service.TYPE;
+    public String mSearchingForMac;
+    protected Runnable mSearcherRescheduler = () -> {
+        Stop();
+        AndroidUtil.sleep(5 * 1000);
+        start();
+    };
 
     public P2PServiceSearcher(Context context) {
         mContext = context;
@@ -105,7 +114,8 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
             public void onDnsSdServiceAvailable(String instanceName, String serviceType, WifiP2pDevice device) {
 
                 Timber.d("[Lazy-Network]instance:%s-service:%s", instanceName, serviceType);
-                if (serviceType.startsWith(mServiceType)) {
+                if (serviceType.startsWith(mServiceType) && (TextUtils.isEmpty(mSearchingForMac) ||
+                        mSearchingForMac.equals(device.deviceAddress))) {
 
 
                     String[] separated = instanceName.split(":");

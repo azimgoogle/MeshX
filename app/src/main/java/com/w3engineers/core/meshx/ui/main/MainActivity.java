@@ -14,6 +14,7 @@ import com.w3engineers.core.libmeshx.discovery.MeshXLogListener;
 import com.w3engineers.core.libmeshx.discovery.Message;
 import com.w3engineers.core.libmeshx.discovery.Peer;
 import com.w3engineers.core.libmeshx.http.MeshHttpServer;
+import com.w3engineers.core.libmeshx.wifid.WiFiDirectManagerLegacy;
 import com.w3engineers.core.meshx.R;
 import com.w3engineers.core.meshx.data.helper.ConnectingServiceHelper;
 import com.w3engineers.core.meshx.databinding.ActivityMainBinding;
@@ -23,6 +24,7 @@ import com.w3engineers.ext.strom.application.ui.base.ItemClickListener;
 import com.w3engineers.ext.strom.util.Text;
 import com.w3engineers.ext.strom.util.helper.Toaster;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -38,6 +40,7 @@ public class MainActivity extends BaseActivity implements MeshXListener, MeshXLo
     private MeshHttpServer mMeshHttpServer;
     public static final int PORT = 5645;
     private Map<String, String> mMacSSIDMap;
+    private volatile String mLazyPendingId;
 
     @Override
     protected int getLayoutId() {
@@ -57,7 +60,9 @@ public class MainActivity extends BaseActivity implements MeshXListener, MeshXLo
 
         mActivityMainBinding.nodeRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mActivityMainBinding.nodeRecyclerView.setAdapter(mainAdapter);
-//        mainAdapter.addItem(Arrays.asList("abc", "def", "ghi"));
+        mActivityMainBinding.nodeRecyclerView.setPadding(0, 0, 0, 15);
+        mainAdapter.addItem(Arrays.asList("f6:71:90:c4:5e:70", "f6:71:90:c4:5e:8c",
+                "22:32:6c:d1:4b:8a"));
 
         mMacSSIDMap = new HashMap<>();
 
@@ -113,7 +118,13 @@ public class MainActivity extends BaseActivity implements MeshXListener, MeshXLo
 
     @Override
     public void onMessage(Message message) {
-        runOnUiThread(() -> Toaster.showShort(""+message));
+        runOnUiThread(() -> {
+            Toaster.showShort(""+message);
+            WiFiDirectManagerLegacy wiFiDirectManagerLegacy = WiFiDirectManagerLegacy.getInstance();
+            if(wiFiDirectManagerLegacy != null) {
+                wiFiDirectManagerLegacy.stopBroadCast();
+            }
+        });
     }
 
     @Override
@@ -123,12 +134,20 @@ public class MainActivity extends BaseActivity implements MeshXListener, MeshXLo
 
             Timber.d("Found:%s", mac);
             Toaster.showLong("Found: "+mac);
-            getAdapter().addItem(mac);
+            getAdapter().updateItem(mac, mac);//Check works or not s selection!!!
         });
     }
 
     @Override
     public void onConnectedWith(String ssid) {
+
+        if(mLazyPendingId != null) {
+            String pendingSSID = mMacSSIDMap.get(mLazyPendingId);
+            if(ssid.equals(pendingSSID)) {
+                sendMessage();
+            }
+
+        }
     }
 
     @Override
@@ -147,25 +166,37 @@ public class MainActivity extends BaseActivity implements MeshXListener, MeshXLo
     public void onItemClick(View view, String item) {
 
         String ssid = mMacSSIDMap.get(item);
-        if(Text.isNotEmpty(ssid)) {
 
-            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            String connectedSSID = wifiInfo.getSSID().replaceAll("\"", "");
-            if(connectedSSID.equals(ssid)) {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String connectedSSID = wifiInfo.getSSID().replaceAll("\"", "");
+        if(connectedSSID.equals(ssid)) {
 
-                try {
-                    mMeshHttpServer.sendMessage("192.168.49.1", "Hello from client!!!".getBytes());
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            } else {
-                //Search for particular mac and send message based on a flag
+            if(sendMessage() && mLazyPendingId != null) {//Atomic operation
+                mLazyPendingId = null;
             }
-
+        } else {
+            mLazyPendingId = item;
+            WiFiDirectManagerLegacy wiFiDirectManagerLegacy = WiFiDirectManagerLegacy.getInstance();
+            if(wiFiDirectManagerLegacy != null) {
+                wiFiDirectManagerLegacy.searchFor(item);
+            }
         }
+    }
+
+    private boolean sendMessage() {
+
+        boolean isSent = false;
+
+        try {
+            isSent = mMeshHttpServer.sendMessage("192.168.49.1", "Hello from client!!!".
+                    getBytes()) == 1;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return isSent;
     }
 }

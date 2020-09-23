@@ -2,6 +2,8 @@ package com.w3engineers.core.libmeshx.wifid;
 
 import android.content.Context;
 
+import com.w3engineers.core.libmeshx.http.nanohttpd.util.AndroidUtil;
+
 /**
  * ============================================================================
  * Copyright (C) 2019 W3 Engineers Ltd - All Rights Reserved.
@@ -24,6 +26,7 @@ import android.content.Context;
  **/
 public class SoftAccessPointSearcher extends P2PServiceSearcher {
 
+    private final long DELAY = 30 * 1000;
     public interface ServiceFound {
         void onServiceFoundSuccess(String ssid, String passPhrase, String mac);
     }
@@ -40,7 +43,14 @@ public class SoftAccessPointSearcher extends P2PServiceSearcher {
     }
 
     @Override
+    public boolean start() {
+        AndroidUtil.postBackground(mSearcherRescheduler, DELAY);
+        return super.start();
+    }
+
+    @Override
     protected void onDesiredServiceFound(String ssid, String passPhrase, String mac) {
+        AndroidUtil.removeBackground(mSearcherRescheduler);
         if(mServiceFound != null) {
             mServiceFound.onServiceFoundSuccess(ssid, passPhrase, mac);
         }

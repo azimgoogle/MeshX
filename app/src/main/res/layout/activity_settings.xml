@@ -39,5 +39,25 @@
             app:layout_constraintStart_toStartOf="@id/guideline_vertical"
             app:layout_constraintTop_toTopOf="@id/guideline_horizontal" />
 
+        <Switch
+            android:id="@+id/switch_wifi_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{settingsViewModel.wiFiDirectGO}"
+            android:onCheckedChanged="@{(switch, checked) -> settingsViewModel.onWiFiDirectGOCheckedChanged(checked)}"
+            android:text="@string/wifi_direct_settings_go"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical"
+            app:layout_constraintTop_toBottomOf="@id/switch_wifi_direct" />
+
+        <Switch
+            android:id="@+id/switch_wifi_lc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{settingsViewModel.wiFiDirectLC}"
+            android:onCheckedChanged="@{(switch, checked) -> settingsViewModel.onWiFiDirectLCCheckedChanged(checked)}"
+            android:text="@string/wifi_direct_settings_lc"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical"
+            app:layout_constraintTop_toBottomOf="@id/switch_wifi_go" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

@@ -39,19 +39,24 @@ public class WiFiDirectManagerLegacy {
     private WiFiClient mWiFiClient;
     private MeshXLogListener mMeshXLogListener;
     private MeshXListener mMeshXListener;
+    public WiFiDirectConfig mWiFiDirectConfig;
     private SoftAccessPointSearcher.ServiceFound mServiceFound = new SoftAccessPointSearcher.ServiceFound() {
         @Override
         public void onServiceFoundSuccess(String ssid, String passPhrase, String mac) {
             if(mMeshXLogListener != null) {
-                mMeshXLogListener.onLog("SSID - " + ssid + "::Passphrase - "+passPhrase);
+                mMeshXLogListener.onLog(ssid + ":: "+passPhrase+"::"+mac);
             }
 
-            if(mWiFiClient == null) {
-                mWiFiClient = new WiFiClient(mContext, ssid, passPhrase);
+            mWiFiClient = new WiFiClient(mContext, ssid, passPhrase);
+            mWiFiClient.mMeshXListener = mMeshXListener;
+
+            if(mSoftAccessPoint != null) {
+                mSoftAccessPoint.Stop();
             }
 
-            mSoftAccessPoint.Stop();
-            mSoftAccessPointSearcher.Stop();
+            if(mSoftAccessPointSearcher != null) {
+                mSoftAccessPointSearcher.Stop();
+            }
 
             mWiFiClient.connect();
 
@@ -87,12 +92,17 @@ public class WiFiDirectManagerLegacy {
 
     public void start() {
 
-        mSoftAccessPoint = new SoftAccessPoint(mContext);
-        mSoftAccessPointSearcher = new SoftAccessPointSearcher(mContext);
-        mSoftAccessPointSearcher.setServiceFound(mServiceFound);
+        if(mWiFiDirectConfig.mIsGO) {
+            mSoftAccessPoint = new SoftAccessPoint(mContext);
+            mSoftAccessPoint.start();
+        }
 
-        mSoftAccessPoint.start();
-        mSoftAccessPointSearcher.start();
+        if(mWiFiDirectConfig.mIsLC) {
+            mSoftAccessPointSearcher = new SoftAccessPointSearcher(mContext);
+            mSoftAccessPointSearcher.setServiceFound(mServiceFound);
+
+            mSoftAccessPointSearcher.start();
+        }
     }
 
     public void destroy() {
@@ -108,5 +118,25 @@ public class WiFiDirectManagerLegacy {
 
     public void setMeshXListener(MeshXListener meshXListener) {
         mMeshXListener = meshXListener;
+    }
+
+    public void searchFor(String mac) {
+        if(mSoftAccessPointSearcher != null) {
+            mSoftAccessPointSearcher.mSearchingForMac = mac;
+            mSoftAccessPointSearcher.Stop();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            mSoftAccessPointSearcher.start();
+        }
+    }
+
+    public void stopBroadCast() {
+        if(mSoftAccessPoint != null) {
+            mSoftAccessPoint.stopLocalServices();
+        }
     }
 }

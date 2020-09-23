@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.w3engineers.core.libmeshx.discovery.MeshXListener;
 import com.w3engineers.core.libmeshx.discovery.MeshXLogListener;
+import com.w3engineers.core.libmeshx.wifid.WiFiDirectConfig;
 import com.w3engineers.core.libmeshx.wifid.WiFiDirectManagerLegacy;
 import com.w3engineers.core.meshx.data.helper.constant.Constants;
 import com.w3engineers.ext.strom.util.helper.data.local.SharedPref;
@@ -40,8 +41,14 @@ public class ConnectingServiceHelper {
 
         //Initiating WiFiD
         if (wifiDirectPreferred) {
+            SharedPref sharedPref = SharedPref.getSharedPref(applicationContext);
+            WiFiDirectConfig wiFiDirectConfig = new WiFiDirectConfig();
+            wiFiDirectConfig.mIsGO = false;//sharedPref.readBoolean(Constants.NetworkInterface.WiFiDirectGO);
+            wiFiDirectConfig.mIsLC = true;//sharedPref.readBoolean(Constants.NetworkInterface.WiFiDirectLC);
+
             WiFiDirectManagerLegacy wiFiDirectManagerLegacy =
                     WiFiDirectManagerLegacy.getInstance(applicationContext);
+            wiFiDirectManagerLegacy.mWiFiDirectConfig = wiFiDirectConfig;
             wiFiDirectManagerLegacy.start();
             wiFiDirectManagerLegacy.setMeshXLogListener(meshXLogListener);
             wiFiDirectManagerLegacy.setMeshXListener(meshXListener);

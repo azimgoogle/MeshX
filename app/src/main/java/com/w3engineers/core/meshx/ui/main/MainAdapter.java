@@ -9,6 +9,8 @@ import com.w3engineers.core.meshx.databinding.ItemMeshNodeBinding;
 import com.w3engineers.ext.strom.application.ui.base.BaseAdapter;
 import com.w3engineers.ext.strom.application.ui.base.ItemClickListener;
 
+import java.util.List;
+
 
 /**
  * ============================================================================
@@ -74,11 +76,22 @@ public class MainAdapter extends BaseAdapter<String> {
         @Override
         public void bind(String item) {
             mItemMeshNodeBinding.nodeId.setText(item);
+            mItemMeshNodeBinding.nodeId.setOnClickListener(v -> mItemClickListener.onItemClick(v,
+                    item));
         }
 
         @Override
         public void onClick(View view) {
             super.onClick(view);
+        }
+    }
+
+    public void updateItem(String item, boolean isAppeared) {
+        List<String> stringList = getItems();
+        for(String st : stringList) {
+            if(item.equals(st)) {
+
+            }
         }
     }
 }
