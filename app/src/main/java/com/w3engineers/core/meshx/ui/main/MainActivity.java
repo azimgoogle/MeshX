@@ -120,10 +120,6 @@ public class MainActivity extends BaseActivity implements MeshXListener, MeshXLo
     public void onMessage(Message message) {
         runOnUiThread(() -> {
             Toaster.showShort(""+message);
-            WiFiDirectManagerLegacy wiFiDirectManagerLegacy = WiFiDirectManagerLegacy.getInstance();
-            if(wiFiDirectManagerLegacy != null) {
-                wiFiDirectManagerLegacy.stopBroadCast();
-            }
         });
     }
 

@@ -61,7 +61,7 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
     String mServiceType = Constants.Service.TYPE;
     public String mSearchingForMac;
     protected Runnable mSearcherRescheduler = () -> {
-        Stop();
+        stopInternal();
         AndroidUtil.sleep(5 * 1000);
         start();
     };
@@ -217,6 +217,11 @@ public abstract class P2PServiceSearcher implements WifiP2pManager.ChannelListen
 
 
     public void Stop() {
+
+        AndroidUtil.removeBackground(mSearcherRescheduler);
+        stopInternal();
+    }
+    private void stopInternal() {
         try {
             mContext.unregisterReceiver(mPeerReceiver);
         } catch (IllegalArgumentException ex) {
