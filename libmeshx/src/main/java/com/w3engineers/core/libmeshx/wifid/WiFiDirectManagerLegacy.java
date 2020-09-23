@@ -107,9 +107,17 @@ public class WiFiDirectManagerLegacy {
 
     public void destroy() {
         mContext = null;
-        mSoftAccessPoint.Stop();
-        mSoftAccessPointSearcher.Stop();
-        mWiFiClient.destroy();
+        if(mSoftAccessPoint != null) {
+            mSoftAccessPoint.Stop();
+        }
+
+        if(mSoftAccessPointSearcher != null) {
+            mSoftAccessPointSearcher.Stop();
+        }
+
+        if(mWiFiClient != null) {
+            mWiFiClient.destroy();
+        }
     }
 
     public void setMeshXLogListener(MeshXLogListener meshXLogListener) {
