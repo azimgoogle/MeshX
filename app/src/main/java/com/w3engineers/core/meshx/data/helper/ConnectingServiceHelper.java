@@ -43,8 +43,8 @@ public class ConnectingServiceHelper {
         if (wifiDirectPreferred) {
             SharedPref sharedPref = SharedPref.getSharedPref(applicationContext);
             WiFiDirectConfig wiFiDirectConfig = new WiFiDirectConfig();
-            wiFiDirectConfig.mIsGO = false;//sharedPref.readBoolean(Constants.NetworkInterface.WiFiDirectGO);
-            wiFiDirectConfig.mIsLC = true;//sharedPref.readBoolean(Constants.NetworkInterface.WiFiDirectLC);
+            wiFiDirectConfig.mIsGO = sharedPref.readBooleanDefaultTrue(Constants.NetworkInterface.WiFiDirectGO);
+            wiFiDirectConfig.mIsLC = sharedPref.readBooleanDefaultTrue(Constants.NetworkInterface.WiFiDirectLC);
 
             WiFiDirectManagerLegacy wiFiDirectManagerLegacy =
                     WiFiDirectManagerLegacy.getInstance(applicationContext);
